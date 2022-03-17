@@ -18,7 +18,7 @@ RSpec.describe 'Registrations', type: :request do
     end
 
     it 'returns a secret key' do
-      expect(response.body).to include('secret')
+      expect(JSON.parse(response.body)).to include('secret')
     end
 
     context 'with an invalid username' do
