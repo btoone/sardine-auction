@@ -6,8 +6,8 @@ class Registration < ApplicationRecord
   # Returns a hash, that can be serialized into a JSON string
   def as_json(options = {})
     {
-      'username' => @username,
-      'address' => @address
+      'username' => username,
+      'address' => address
     }
   end
 
