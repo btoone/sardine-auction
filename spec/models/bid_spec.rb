@@ -13,4 +13,28 @@ RSpec.describe Bid, type: :model do
       expect(Bid.highest).to eq high_bid
     end
   end
+
+  describe '#as_json' do
+    let(:bid) { FactoryBot.create :bid }
+
+    it 'does not include timestamps' do
+      expect(bid.as_json).not_to include('id', 'created_at', 'updated_at')
+    end
+
+    it 'serializes the amount and owner' do
+      expect(bid.as_json).to include(
+        'amount' => bid.amount,
+        'owner' => bid.owner
+      )
+    end
+  end
+
+  describe '#to_json' do
+    let(:bid) { FactoryBot.create :bid }
+
+    it 'returns a JSON string' do
+      actual = bid.to_json
+      expect(JSON.parse(actual)).to eq bid.as_json
+    end
+  end
 end

@@ -18,15 +18,18 @@ RSpec.describe 'Bids', type: :request do
     context 'when multiple bids' do
       before do
         FactoryBot.create :bid
-        FactoryBot.create :bid, amount: 1.5
+        FactoryBot.create :bid, amount: 1.25
       end
 
       it 'returns the current highest bid' do
         get '/bids/current', headers: headers
 
-        highest_bid = { 'highest_bid' => Bid.highest.as_json }
         expect(JSON.parse(response.body)).to eq highest_bid
       end
     end
+  end
+
+  def highest_bid
+    JSON.parse(file_fixture('highest_bid.json').read)
   end
 end
