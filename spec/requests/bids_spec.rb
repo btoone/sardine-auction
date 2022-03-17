@@ -30,6 +30,6 @@ RSpec.describe 'Bids', type: :request do
   end
 
   def highest_bid
-    JSON.parse(file_fixture('highest_bid.json').read)
+    JSON.parse(file_fixture('bid_not_authorized_highest.json').read)
   end
 end
