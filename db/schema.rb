@@ -10,7 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_17_054142) do
+ActiveRecord::Schema.define(version: 2022_03_17_183421) do
+
+  create_table "bids", force: :cascade do |t|
+    t.float "amount"
+    t.boolean "owner"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "registrations", force: :cascade do |t|
     t.string "username"
