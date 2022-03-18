@@ -26,19 +26,22 @@ RSpec.describe 'Bids', type: :request do
 
     context 'when authorized' do
       let(:registration) { Registration.last }
+      let(:headers) do
+        { 'secret': registration.username }
+      end
 
       before do
         FactoryBot.create :bid, amount: 1.25
       end
 
       it 'includes the user\'s latest bid' do
-        get '/bids/current', headers: { 'secret': registration.username }
+        get '/bids/current', headers: headers
 
         expect(JSON.parse(response.body)).to include 'current_bid' => { 'amount' => 1.25 }
       end
 
       it 'tells the user if the current highest bid is their own' do
-        get '/bids/current', headers: { 'secret': registration.username }
+        get '/bids/current', headers: headers
 
         expect(JSON.parse(response.body)).to eq bid_authorized_highest
       end

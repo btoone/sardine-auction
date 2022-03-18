@@ -6,9 +6,7 @@ RSpec.describe 'Registrations', type: :request do
   describe 'POST /registrations' do
     let(:registration_params) { FactoryBot.attributes_for :registration }
     let(:headers) do
-      {
-        'Content-Type': 'application/json'
-      }
+      { 'Content-Type': 'application/json' }
     end
 
     it 'registers a user' do
