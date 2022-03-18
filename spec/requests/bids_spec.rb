@@ -4,12 +4,8 @@ require 'rails_helper'
 
 RSpec.describe 'Bids', type: :request do
   describe 'GET /bids/current' do
-    before do
-      headers = { 'Accept': 'application/json' }
-    end
-
     it 'responds with status :ok' do
-      get '/bids/current', headers: headers
+      get '/bids/current'
 
       expect(response.content_type).to eq('application/json; charset=utf-8')
       expect(response).to have_http_status(:ok)
@@ -22,29 +18,61 @@ RSpec.describe 'Bids', type: :request do
       end
 
       it 'returns the current highest bid' do
-        get '/bids/current', headers: headers
+        get '/bids/current'
 
-        expect(JSON.parse(response.body)).to eq highest_bid
+        expect(JSON.parse(response.body)).to eq bid_not_authorized_highest
+      end
+    end
+
+    context 'when authorized' do
+      let(:registration) { Registration.last }
+
+      before do
+        FactoryBot.create :bid, amount: 1.25
+      end
+
+      it 'includes the user\'s latest bid' do
+        get '/bids/current', headers: { 'secret': registration.username }
+
+        expect(JSON.parse(response.body)).to include 'current_bid' => { 'amount' => 1.25 }
+      end
+
+      it 'tells the user if the current highest bid is their own' do
+        get '/bids/current', headers: { 'secret': registration.username }
+
+        expect(JSON.parse(response.body)).to eq bid_authorized_highest
       end
     end
   end
 
   describe 'POST /bids' do
+    SECRET = 'abc123'
     let(:bid_params) { FactoryBot.attributes_for :bid }
 
-    before do
-      headers = { 'Content-Type': 'application/json' }
+    it 'creates a new bid' do
+      post '/bids', params: bid_params.to_json, headers: { 
+        'Authorization': SECRET
+      }
+
+      expect(response.content_type).to eq('application/json; charset=utf-8')
+      expect(response).to have_http_status(:created)
+      expect(Registration.last.username).to eq registration_params[:username]
     end
 
     context 'when not authorized' do
       it 'responds with unauthorized' do
         post '/bids', params: bid_params.to_json, headers: headers
+
         expect(response).to have_http_status(:unauthorized)
       end
     end
   end
 
-  def highest_bid
+  def bid_not_authorized_highest
     JSON.parse(file_fixture('bid_not_authorized_highest.json').read)
+  end
+
+  def bid_authorized_highest
+    JSON.parse(file_fixture('bid_authorized_highest.json').read)
   end
 end

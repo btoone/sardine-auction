@@ -1,8 +1,19 @@
 # frozen_string_literal: true
 
 class BidsController < ApplicationController
+  before_action :set_registration
+
   def current
-    render json: { 'highest_bid' => Bid.highest }, status: :ok
+    if authorized?
+      highest_bid = Bid.highest
+      response = {
+        'current_bid': { 'amount': @registration.current_bid.amount },
+        'highest_bid' => { 'amount': highest_bid.amount, 'owner': highest_bid.registration == @registration }
+      }
+      render json: response, status: :ok
+    else
+      render json: { 'highest_bid' => Bid.highest }, status: :ok
+    end
   end
 
   def create
@@ -15,6 +26,11 @@ class BidsController < ApplicationController
   private
 
   def authorized?
-    false
+    @registration.present?
+  end
+
+  def set_registration
+    decoded_token = request.headers[:HTTP_SECRET]
+    @registration = Registration.find_by(username: decoded_token)
   end
 end
