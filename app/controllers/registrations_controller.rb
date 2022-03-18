@@ -7,7 +7,7 @@ class RegistrationsController < ApplicationController
     if registration.save
       render json: { secret: '1234asdf' }, status: :created
     else
-      render json: { message: registration.errors.full_messages }, status: 422
+      render json: { message: registration.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
