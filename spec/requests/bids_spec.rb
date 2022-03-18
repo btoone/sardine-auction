@@ -29,6 +29,21 @@ RSpec.describe 'Bids', type: :request do
     end
   end
 
+  describe 'POST /bids' do
+    let(:bid_params) { FactoryBot.attributes_for :bid }
+
+    before do
+      headers = { 'Content-Type': 'application/json' }
+    end
+
+    context 'when not authorized' do
+      it 'responds with unauthorized' do
+        post '/bids', params: bid_params.to_json, headers: headers
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+  end
+
   def highest_bid
     JSON.parse(file_fixture('bid_not_authorized_highest.json').read)
   end
