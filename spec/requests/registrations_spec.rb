@@ -24,6 +24,8 @@ RSpec.describe 'Registrations', type: :request do
     end
 
     context 'with an invalid username' do
+      let(:registration_params) { FactoryBot.attributes_for :registration, username: Registration.first.username }
+
       before do
         FactoryBot.create :registration
       end
