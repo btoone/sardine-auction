@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Bid < ApplicationRecord
+  belongs_to :registration
+
   class << self
     def highest
       Bid.last
