@@ -10,13 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_17_183421) do
+ActiveRecord::Schema.define(version: 2022_03_18_160804) do
 
   create_table "bids", force: :cascade do |t|
     t.float "amount"
     t.boolean "owner"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "registration_id"
+    t.index ["registration_id"], name: "index_bids_on_registration_id"
   end
 
   create_table "registrations", force: :cascade do |t|
@@ -26,4 +28,5 @@ ActiveRecord::Schema.define(version: 2022_03_17_183421) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "bids", "registrations"
 end

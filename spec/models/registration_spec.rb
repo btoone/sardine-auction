@@ -36,4 +36,18 @@ RSpec.describe Registration, type: :model do
       expect(JSON.parse(actual)).to eq registration.as_json
     end
   end
+
+  describe '#current_bid' do
+    let(:registration) { FactoryBot.create :registration }
+
+    before do
+      registration.bids << FactoryBot.create(:bid)
+      registration.bids << FactoryBot.create(:bid, amount: 2.0)
+    end
+
+    it 'it returns the registration\'s latest bid' do
+      actual = registration.current_bid
+      expect(actual.amount).to eq 2.0
+    end
+  end
 end
