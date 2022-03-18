@@ -49,22 +49,30 @@ RSpec.describe 'Bids', type: :request do
   end
 
   describe 'POST /bids' do
-    SECRET = 'abc123'
     let(:bid_params) { FactoryBot.attributes_for :bid }
+    let(:registration) { Registration.last }
+    let(:headers) do
+      {
+        'Content-Type': 'application/json',
+        'secret': registration.username
+      }
+    end
+
+    before do
+      FactoryBot.create :registration
+    end
 
     it 'creates a new bid' do
-      post '/bids', params: bid_params.to_json, headers: { 
-        'Authorization': SECRET
-      }
+      post '/bids', params: bid_params.to_json, headers: headers
 
       expect(response.content_type).to eq('application/json; charset=utf-8')
       expect(response).to have_http_status(:created)
-      expect(Registration.last.username).to eq registration_params[:username]
+      expect(Bid.last.amount).to eq bid_params[:amount]
     end
 
     context 'when not authorized' do
       it 'responds with unauthorized' do
-        post '/bids', params: bid_params.to_json, headers: headers
+        post '/bids', params: bid_params.to_json
 
         expect(response).to have_http_status(:unauthorized)
       end

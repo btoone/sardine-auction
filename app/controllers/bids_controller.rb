@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class BidsController < ApplicationController
+  # before_action :authorize
   before_action :set_registration
 
   def current
@@ -18,6 +19,13 @@ class BidsController < ApplicationController
 
   def create
     if authorized?
+      bid = Bid.new(bid_params)
+      bid.registration = @registration
+      if bid.save
+        render json: bid.to_json, status: :created
+      else
+        render json: { message: bid.errors.full_messages }, status: :unprocessable_entity
+      end
     else
       head :unauthorized
     end
@@ -32,5 +40,9 @@ class BidsController < ApplicationController
   def set_registration
     decoded_token = request.headers[:HTTP_SECRET]
     @registration = Registration.find_by(username: decoded_token)
+  end
+
+  def bid_params
+    params.require(:bid).permit(:amount)
   end
 end
