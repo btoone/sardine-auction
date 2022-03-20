@@ -84,13 +84,18 @@ RSpec.describe 'Bids', type: :request do
       end
     end
 
-    context 'when bid has the same amount as previous bid' do
+    context 'with consecutive bids' do
       before do
-        FactoryBot.create :bid
+        FactoryBot.create :bid, registration: registration
       end
 
-      it 'responds with :unprocessable_entity' do
+      it 'must not have the same amount as previous bid' do
         post '/bids', params: bid_params.to_json, headers: headers
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'must not be from the same user' do
+        post '/bids', params: FactoryBot.attributes_for(:bid, amount: 0.5).to_json, headers: headers
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end

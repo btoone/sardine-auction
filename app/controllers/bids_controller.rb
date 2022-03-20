@@ -3,6 +3,7 @@
 class BidsController < ApplicationController
 
   before_action :set_registration
+  before_action :validate_params, only: :create
 
   def current
     highest_bid = Bid.highest
@@ -41,6 +42,13 @@ class BidsController < ApplicationController
   def set_registration
     secret = request.headers[:HTTP_SECRET]
     @registration = Registration.find_by(username: SecretService.new.decode_secret(secret)) unless secret.nil?
+  end
+
+  def validate_params
+    return if Bid.all.empty?
+
+    message = 'You already have the current highest bid'
+    render json: { error: message }, status: :unprocessable_entity if @registration.id == Bid.last.registration_id
   end
 
   def bid_params
