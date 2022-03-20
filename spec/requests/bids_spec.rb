@@ -84,19 +84,41 @@ RSpec.describe 'Bids', type: :request do
       end
     end
 
-    context 'with consecutive bids' do
+    context 'with consecutive bids from two different users' do
+      let(:registration) { Registration.first }
+
+      before do
+        FactoryBot.create :bid
+      end
+
+      context 'when amounts are the same' do
+        it 'responds with :unprocessable_entity' do
+          post '/bids', params: bid_params.to_json, headers: headers
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it 'matches an error message /previous bid/' do
+          post '/bids', params: bid_params.to_json, headers: headers
+          actual = JSON.parse(response.body)
+          expect(actual['error'].first).to match /previous bid/
+        end
+      end
+    end
+
+    context 'with consecutive bids from the same user' do
       before do
         FactoryBot.create :bid, registration: registration
       end
 
-      it 'must not have the same amount as previous bid' do
-        post '/bids', params: bid_params.to_json, headers: headers
+      it 'responds with :unprocessable_entity' do
+        post '/bids', params: FactoryBot.attributes_for(:bid, amount: 0.5).to_json, headers: headers
         expect(response).to have_http_status(:unprocessable_entity)
       end
 
-      it 'must not be from the same user' do
+      it 'matches an error message /already have current highest bid/' do
         post '/bids', params: FactoryBot.attributes_for(:bid, amount: 0.5).to_json, headers: headers
-        expect(response).to have_http_status(:unprocessable_entity)
+        actual = JSON.parse(response.body)
+        expect(actual['error']).to match /highest bid/
       end
     end
   end

@@ -26,7 +26,7 @@ class Bid < ApplicationRecord
   end
 
   def amount_must_be_greater
-    bids = Bid.where(registration_id: registration_id).pluck(:amount)
+    bids = Bid.pluck(:amount)
 
     return if bids.empty?
 
