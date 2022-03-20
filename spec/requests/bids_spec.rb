@@ -83,6 +83,17 @@ RSpec.describe 'Bids', type: :request do
         expect(response).to have_http_status(:unauthorized)
       end
     end
+
+    context 'when bid has the same amount as previous bid' do
+      before do
+        FactoryBot.create :bid
+      end
+
+      it 'responds with :unprocessable_entity' do
+        post '/bids', params: bid_params.to_json, headers: headers
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
   end
 
   def bid_not_authorized_highest

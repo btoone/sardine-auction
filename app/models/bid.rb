@@ -4,6 +4,7 @@ class Bid < ApplicationRecord
   belongs_to :registration
 
   validates :amount, numericality: { greater_than: 0.0 }
+  validate :amount_must_be_greater
 
   class << self
     def highest
@@ -22,5 +23,13 @@ class Bid < ApplicationRecord
   # Stores as a json string
   def to_json(*options)
     as_json(*options).to_json(*options)
+  end
+
+  def amount_must_be_greater
+    bids = Bid.where(registration_id: registration_id).pluck(:amount)
+
+    return if bids.empty?
+
+    errors.add(:amount, 'Amount must be greater than previous bid') if amount <= bids.max
   end
 end

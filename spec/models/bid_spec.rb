@@ -11,6 +11,11 @@ RSpec.describe Bid, type: :model do
     it 'is positive' do
       expect { FactoryBot.create :bid, amount: -1.0 }.to raise_error ActiveRecord::RecordInvalid
     end
+
+    it 'must be greater than the previous bid' do
+      bid = FactoryBot.create :bid, amount: 1.0
+      expect { FactoryBot.create :bid, amount: 1.0, registration: bid.registration }.to raise_error ActiveRecord::RecordInvalid
+    end
   end
 
   describe '#highest' do
