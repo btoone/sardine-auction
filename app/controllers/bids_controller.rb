@@ -3,7 +3,7 @@
 class BidsController < ApplicationController
 
   before_action :set_registration
-  before_action :validate_params, only: :create
+  before_action :validate_consecutive, only: :create
 
   def current
     highest_bid = Bid.highest
@@ -44,7 +44,7 @@ class BidsController < ApplicationController
     @registration = Registration.find_by(username: SecretService.new.decode_secret(secret)) unless secret.nil?
   end
 
-  def validate_params
+  def validate_consecutive
     return if Bid.all.empty?
 
     message = 'You already have the current highest bid'
