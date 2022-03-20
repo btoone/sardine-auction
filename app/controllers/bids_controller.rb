@@ -26,7 +26,7 @@ class BidsController < ApplicationController
       if bid.save
         render json: bid.to_json, status: :created
       else
-        render json: { message: bid.errors.full_messages }, status: :unprocessable_entity
+        render json: { error: bid.errors.full_messages }, status: :unprocessable_entity
       end
     else
       head :unauthorized
