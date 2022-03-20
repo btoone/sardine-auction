@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Bids', type: :request do
-
   describe 'GET /bids/current' do
     before do
       FactoryBot.create :bid
@@ -74,6 +73,11 @@ RSpec.describe 'Bids', type: :request do
       expect(response.content_type).to eq('application/json; charset=utf-8')
       expect(response).to have_http_status(:created)
       expect(Bid.last.amount).to eq bid_params[:amount]
+    end
+
+    it 'includes owner flag' do
+      post '/bids', params: bid_params.to_json, headers: headers
+      expect(JSON.parse(response.body)).to include 'owner' => true
     end
 
     context 'when not authorized' do

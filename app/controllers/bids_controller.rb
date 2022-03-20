@@ -24,7 +24,8 @@ class BidsController < ApplicationController
       bid = Bid.new(bid_params)
       bid.registration = @registration
       if bid.save
-        render json: bid.to_json, status: :created
+        response = { 'amount': bid.amount, 'owner': bid.registration == @registration }
+        render json: response.to_json, status: :created
       else
         render json: { error: bid.errors.full_messages }, status: :unprocessable_entity
       end
