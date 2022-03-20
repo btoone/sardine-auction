@@ -5,6 +5,10 @@ require 'rails_helper'
 RSpec.describe 'Bids', type: :request do
 
   describe 'GET /bids/current' do
+    before do
+      FactoryBot.create :bid
+    end
+
     it 'responds with status :ok' do
       get '/bids/current'
 
@@ -14,7 +18,6 @@ RSpec.describe 'Bids', type: :request do
 
     context 'when multiple bids' do
       before do
-        FactoryBot.create :bid
         FactoryBot.create :bid, amount: 1.25
       end
 

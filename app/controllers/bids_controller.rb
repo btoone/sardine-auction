@@ -5,15 +5,16 @@ class BidsController < ApplicationController
   before_action :set_registration
 
   def current
+    highest_bid = Bid.highest
+
     if authorized?
-      highest_bid = Bid.highest
       response = {
         'current_bid': { 'amount': @registration.current_bid.amount },
         'highest_bid' => { 'amount': highest_bid.amount, 'owner': highest_bid.registration == @registration }
       }
       render json: response, status: :ok
     else
-      render json: { 'highest_bid' => Bid.highest }, status: :ok
+      render json: { 'highest_bid' => { 'amount': highest_bid.amount, 'owner': highest_bid.registration == @registration } }, status: :ok
     end
   end
 
