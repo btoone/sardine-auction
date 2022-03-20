@@ -9,7 +9,7 @@ class RegistrationsController < ApplicationController
       secret = SecretService.new.generate_secret(registration.username)
       render json: { secret: secret }, status: :created
     else
-      render json: { message: registration.errors.full_messages }, status: :unprocessable_entity
+      render json: { error: registration.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
