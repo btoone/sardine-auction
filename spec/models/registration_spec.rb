@@ -38,11 +38,11 @@ RSpec.describe Registration, type: :model do
   end
 
   describe '#current_bid' do
-    let(:registration) { FactoryBot.create :registration }
+    let(:registration) { Registration.last }
 
     before do
-      registration.bids << FactoryBot.create(:bid)
-      registration.bids << FactoryBot.create(:bid, amount: 2.0)
+      FactoryBot.create :bid
+      FactoryBot.create :bid, amount: 2.0
     end
 
     it 'it returns the registration\'s latest bid' do
