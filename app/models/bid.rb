@@ -3,6 +3,8 @@
 class Bid < ApplicationRecord
   belongs_to :registration
 
+  validates :amount, numericality: { greater_than: 0.0 }
+
   class << self
     def highest
       Bid.last

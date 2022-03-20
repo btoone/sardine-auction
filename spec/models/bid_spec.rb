@@ -3,6 +3,16 @@
 require 'rails_helper'
 
 RSpec.describe Bid, type: :model do
+  describe 'A valid Bid' do
+    it 'is a number' do
+      expect { FactoryBot.create :bid, amount: '' }.to raise_error ActiveRecord::RecordInvalid
+    end
+
+    it 'is positive' do
+      expect { FactoryBot.create :bid, amount: -1.0 }.to raise_error ActiveRecord::RecordInvalid
+    end
+  end
+
   describe '#highest' do
     before do
       FactoryBot.create :bid
