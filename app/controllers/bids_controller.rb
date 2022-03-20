@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class BidsController < ApplicationController
-  # before_action :authorize
+
   before_action :set_registration
 
   def current

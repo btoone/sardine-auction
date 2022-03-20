@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Bids', type: :request do
+
   describe 'GET /bids/current' do
     it 'responds with status :ok' do
       get '/bids/current'

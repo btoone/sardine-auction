@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class RegistrationsController < ApplicationController
+
   def create
     registration = Registration.new(registration_params)
 
