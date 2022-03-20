@@ -38,8 +38,8 @@ class BidsController < ApplicationController
   end
 
   def set_registration
-    decoded_token = request.headers[:HTTP_SECRET]
-    @registration = Registration.find_by(username: decoded_token)
+    secret = request.headers[:HTTP_SECRET]
+    @registration = Registration.find_by(username: SecretService.new.decode_secret(secret)) unless secret.nil?
   end
 
   def bid_params

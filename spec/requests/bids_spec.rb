@@ -26,8 +26,9 @@ RSpec.describe 'Bids', type: :request do
 
     context 'when authorized' do
       let(:registration) { Registration.last }
+      let(:service) { SecretService.new }
       let(:headers) do
-        { 'secret': registration.username }
+        { 'secret': service.generate_secret(registration.username) }
       end
 
       before do
@@ -35,7 +36,7 @@ RSpec.describe 'Bids', type: :request do
       end
 
       it 'includes the user\'s latest bid' do
-        get '/bids/current', headers: headers
+        get '/bids/current', headers: { 'secret': service.generate_secret(registration.username) }
 
         expect(JSON.parse(response.body)).to include 'current_bid' => { 'amount' => 1.25 }
       end
@@ -51,10 +52,11 @@ RSpec.describe 'Bids', type: :request do
   describe 'POST /bids' do
     let(:bid_params) { FactoryBot.attributes_for :bid }
     let(:registration) { Registration.last }
+    let(:service) { SecretService.new }
     let(:headers) do
       {
         'Content-Type': 'application/json',
-        'secret': registration.username
+        'secret': service.generate_secret(registration.username)
       }
     end
 
